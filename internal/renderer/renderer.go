@@ -11,6 +11,7 @@ import (
 	"github.com/saravenpi/catalyst/embed"
 	"github.com/saravenpi/catalyst/internal/parser"
 	"github.com/yuin/goldmark"
+	"github.com/yuin/goldmark/extension"
 	goldmarkhtml "github.com/yuin/goldmark/renderer/html"
 )
 
@@ -19,7 +20,7 @@ import (
 // rendered HTML in their own browser — same threat model as Hugo, Marp,
 // and every other static site generator.
 
-var md = goldmark.New(goldmark.WithRendererOptions(goldmarkhtml.WithUnsafe()))
+var md = goldmark.New(goldmark.WithExtensions(extension.GFM), goldmark.WithRendererOptions(goldmarkhtml.WithUnsafe()))
 
 type mermaidBlock struct {
 	code string
