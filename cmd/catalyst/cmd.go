@@ -65,7 +65,7 @@ func buildCmd() *cobra.Command {
 			})
 		},
 	}
-	cmd.Flags().StringVarP(&outFlag, "output", "o", "dist", "output file")
+	cmd.Flags().StringVarP(&outFlag, "output", "o", "", "output file")
 	return cmd
 }
 
