@@ -1,0 +1,9 @@
+# facile discovers this file to install pres from prebuilt releases.
+
+name = "pres"
+summary = "Turns a folder of markdown into a self-contained HTML slideshow"
+repo = "saravenpi/pres"
+bin = "pres"
+build = "go"
+asset = "pres"
+goVersionVar = "main.version"
