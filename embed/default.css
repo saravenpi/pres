@@ -1,17 +1,37 @@
 :root {
+  --bg: #fafafa;
+  --fg: #141414;
+  --accent: #7c5cff;
+  --muted: #5c5c5c;
+  --surface: #efefef;
+  --border: rgba(0, 0, 0, 0.12);
+}
+
+[data-theme="dark"] {
   --bg: #141414;
   --fg: #e8e8e8;
   --accent: #7c5cff;
+  --muted: #9a9a9a;
+  --surface: #1f1f1f;
+  --border: rgba(255, 255, 255, 0.12);
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-html, body {
+html,
+body {
   height: 100%;
   background: var(--bg);
   color: var(--fg);
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   overflow: hidden;
+  line-height: 1.5;
 }
 
 .slide {
@@ -20,18 +40,13 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4rem 6rem;
+  padding: clamp(2rem, 5vmin, 5rem);
   position: absolute;
   top: 0;
   left: 0;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.2s ease;
-}
-
-.slide-content {
-  max-width: 1100px;
-  text-align: left;
+  transition: opacity 0.3s ease;
 }
 
 .slide.active {
@@ -39,42 +54,67 @@ html, body {
   pointer-events: auto;
 }
 
+.slide-content {
+  width: 100%;
+  max-width: min(90vw, 1200px);
+  text-align: left;
+}
+
 .slide h1 {
-  font-size: 3.5rem;
+  font-size: clamp(2.5rem, 10vmin, 6rem);
+  font-weight: 700;
   line-height: 1.1;
-  margin-bottom: 1.5rem;
+  margin-bottom: clamp(1rem, 3vmin, 2rem);
 }
 
 .slide h2 {
-  font-size: 2.5rem;
+  font-size: clamp(2rem, 7vmin, 4rem);
+  font-weight: 600;
   line-height: 1.2;
-  margin-bottom: 1.5rem;
+  margin-bottom: clamp(0.875rem, 2.5vmin, 1.75rem);
 }
 
-.slide p, .slide li {
-  font-size: 1.5rem;
+.slide p {
+  font-size: clamp(1.125rem, 3vmin, 2rem);
   line-height: 1.5;
+  margin-bottom: clamp(0.75rem, 2vmin, 1.5rem);
 }
 
-.slide ul, .slide ol {
+.slide ul,
+.slide ol {
+  font-size: clamp(1.125rem, 3vmin, 2rem);
+  line-height: 1.5;
   list-style: none;
   padding-left: 0;
+  margin-bottom: clamp(0.75rem, 2vmin, 1.5rem);
 }
 
 .slide li {
   position: relative;
-  padding-left: 2rem;
+  padding-left: clamp(1.5rem, 4vmin, 2.5rem);
+  margin-bottom: clamp(0.25rem, 1vmin, 0.75rem);
 }
 
 .slide li::before {
   content: '—';
   position: absolute;
   left: 0;
+  color: var(--accent);
+}
+
+.slide a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.slide a:hover {
+  text-decoration: underline;
 }
 
 .slide img {
   max-width: 100%;
   max-height: 60vh;
+  display: block;
 }
 
 .slide .mermaid svg {
@@ -86,41 +126,59 @@ html, body {
 .slide video {
   max-width: 100%;
   max-height: 70vh;
+  display: block;
 }
 
 .slide pre {
-  background: #1f1f1f;
-  padding: 1rem 1.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: clamp(0.75rem, 2vmin, 1.5rem);
   overflow-x: auto;
-  font-size: 1rem;
+  font-size: clamp(0.875rem, 2vmin, 1.25rem);
+  line-height: 1.5;
+  margin-bottom: clamp(0.75rem, 2vmin, 1.5rem);
 }
 
 .slide pre.mermaid {
   background: transparent;
+  border: none;
+  padding: 0;
 }
 
 .slide code {
   font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+  font-size: 0.9em;
+  background: var(--surface);
+  padding: 0.1em 0.3em;
+  border-radius: 2px;
+}
+
+.slide pre code {
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  font-size: inherit;
 }
 
 .slide table {
   border-collapse: collapse;
   width: 100%;
-  max-width: 800px;
+  max-width: min(100%, 900px);
+  font-size: clamp(1rem, 2.5vmin, 1.5rem);
+  margin-bottom: clamp(0.75rem, 2vmin, 1.5rem);
 }
 
 .slide th {
   text-align: left;
-  padding: 0.6rem 1rem;
+  padding: clamp(0.5rem, 1.5vmin, 1rem);
   border-bottom: 2px solid var(--accent);
-  font-size: 1.2rem;
-  opacity: 0.8;
+  font-weight: 600;
+  color: var(--muted);
 }
 
 .slide td {
-  padding: 0.5rem 1rem;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
-  font-size: 1.2rem;
+  padding: clamp(0.5rem, 1.5vmin, 1rem);
+  border-bottom: 1px solid var(--border);
 }
 
 .slide tr:last-child td {
@@ -129,8 +187,8 @@ html, body {
 
 .indicator {
   position: fixed;
-  bottom: 1.5rem;
-  right: 2rem;
-  font-size: 0.875rem;
-  opacity: 0.6;
+  bottom: clamp(1rem, 3vmin, 2rem);
+  right: clamp(1rem, 3vmin, 2rem);
+  font-size: clamp(0.875rem, 2vmin, 1.25rem);
+  color: var(--muted);
 }

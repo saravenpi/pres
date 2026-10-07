@@ -20,23 +20,22 @@ var md = goldmark.New(
 	goldmark.WithRendererOptions(goldmarkhtml.WithUnsafe()),
 )
 
-type mermaidBlock struct {
-	code string
-}
-
-var mermaidFenceRE = regexp.MustCompile("(?s)```mermaid\\s*\\n(.*?)```")
-
 var assetRefRE = regexp.MustCompile(`!\[([^\]]*)\]\(([^)]+)\)`)
 
-func Render(p *parser.Presentation, offline bool, mermaidScript []byte) ([]byte, error) {
+func Render(p *parser.Presentation, offline bool, mermaidScript []byte, theme string) ([]byte, error) {
 	var buf bytes.Buffer
+
+	if theme != "dark" {
+		theme = "light"
+	}
 
 	css, err := buildCSS()
 	if err != nil {
 		return nil, fmt.Errorf("building CSS: %w", err)
 	}
 
-	buf.WriteString("<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n")
+	buf.WriteString("<!DOCTYPE html>\n")
+	fmt.Fprintf(&buf, "<html lang=\"en\" data-theme=\"%s\">\n<head>\n", theme)
 	buf.WriteString("<meta charset=\"UTF-8\">\n")
 	buf.WriteString("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n")
 	fmt.Fprintf(&buf, "<title>%s</title>\n", stdhtml.EscapeString(p.Title))
@@ -45,7 +44,7 @@ func Render(p *parser.Presentation, offline bool, mermaidScript []byte) ([]byte,
 	buf.WriteString("\n</style>\n</head>\n<body>\n")
 
 	writeSlides(&buf, p)
-	writeMermaid(&buf, offline, mermaidScript)
+	writeMermaid(&buf, offline, mermaidScript, theme)
 	writeNav(&buf, offline)
 
 	buf.WriteString("</body>\n</html>\n")
@@ -85,41 +84,6 @@ func writeSlides(buf *bytes.Buffer, p *parser.Presentation) {
 	buf.WriteString("</div>\n")
 	buf.WriteString("<div id=\"counter\" class=\"indicator\"></div>\n")
 }
-
-func writeMermaid(buf *bytes.Buffer, offline bool, script []byte) {
-	if len(script) > 0 {
-		buf.WriteString("<script>\n")
-		buf.Write(script)
-		buf.WriteString("\n</script>\n")
-	} else {
-		buf.WriteString(
-			"<script src=\"https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js\"></script>\n",
-		)
-	}
-	buf.WriteString(mermaidInit)
-}
-
-const mermaidInit = `<script>
-if (typeof mermaid !== 'undefined') {
- mermaid.initialize({
-  startOnLoad: true,
-  theme: 'base',
-  securityLevel: 'loose',
-  themeVariables: {
-   background: 'transparent',
-   primaryColor: '#7c5cff',
-   primaryTextColor: '#e8e8e8',
-   primaryBorderColor: '#5a3fd4',
-   lineColor: '#7c5cff',
-   secondaryColor: '#1f1f1f',
-   tertiaryColor: '#141414',
-   textColor: '#e8e8e8',
-   fontSize: '16px'
-  }
- });
-}
-</script>
-`
 
 func writeNav(buf *bytes.Buffer, offline bool) {
 	buf.WriteString(kbNavScript)
@@ -170,18 +134,6 @@ func activeClass(i int) string {
 		return " active"
 	}
 	return ""
-}
-
-func extractMermaidBlocks(content string) (string, []mermaidBlock) {
-	var blocks []mermaidBlock
-	cleaned := mermaidFenceRE.ReplaceAllStringFunc(content, func(match string) string {
-		sub := mermaidFenceRE.FindStringSubmatch(match)
-		if len(sub) >= 2 {
-			blocks = append(blocks, mermaidBlock{code: strings.TrimSpace(sub[1])})
-		}
-		return ""
-	})
-	return cleaned, blocks
 }
 
 func inlineAssets(content string, assets map[string]parser.Asset) string {

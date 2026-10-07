@@ -12,8 +12,9 @@ import (
 )
 
 type Options struct {
-	Dir  string
-	Out  string
+	Dir   string
+	Out   string
+	Theme string
 }
 
 const mermaidURL = "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"
@@ -29,7 +30,7 @@ func Build(opts Options) error {
 		return fmt.Errorf("downloading mermaid.js: %w", err)
 	}
 
-	b, err := renderer.Render(p, true, mermaidScript)
+	b, err := renderer.Render(p, true, mermaidScript, opts.Theme)
 	if err != nil {
 		return fmt.Errorf("rendering: %w", err)
 	}

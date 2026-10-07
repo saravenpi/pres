@@ -17,8 +17,9 @@ import (
 )
 
 type Options struct {
-	Dir  string
-	Port int
+	Dir   string
+	Port  int
+	Theme string
 }
 
 func Serve(opts Options) error {
@@ -34,7 +35,7 @@ func Serve(opts Options) error {
 	var html []byte
 
 	rebuild := func(pp *parser.Presentation) error {
-		b, err := renderer.Render(pp, false, nil)
+		b, err := renderer.Render(pp, false, nil, opts.Theme)
 		if err != nil {
 			return err
 		}
@@ -113,9 +114,9 @@ func Serve(opts Options) error {
 	}()
 
 	srv := &http.Server{
-		Handler:      mux,
-		ReadTimeout:  15 * time.Second,
-		IdleTimeout:  60 * time.Second,
+		Handler:     mux,
+		ReadTimeout: 15 * time.Second,
+		IdleTimeout: 60 * time.Second,
 	}
 	err = srv.Serve(ln)
 	if err != nil && err != http.ErrServerClosed {

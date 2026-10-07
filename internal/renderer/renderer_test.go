@@ -17,7 +17,7 @@ func TestRender_BasicSlide(t *testing.T) {
 		Mermaids: map[string]string{},
 	}
 
-	result, err := Render(p, false, nil)
+	result, err := Render(p, false, nil, "light")
 	if err != nil {
 		t.Fatalf("Render() error: %v", err)
 	}
@@ -46,7 +46,7 @@ func TestRender_MultipleSlides(t *testing.T) {
 		Mermaids: map[string]string{},
 	}
 
-	result, err := Render(p, false, nil)
+	result, err := Render(p, false, nil, "light")
 	if err != nil {
 		t.Fatalf("Render() error: %v", err)
 	}
@@ -71,7 +71,7 @@ func TestRender_MermaidDiagram(t *testing.T) {
 		Mermaids: map[string]string{},
 	}
 
-	result, err := Render(p, false, nil)
+	result, err := Render(p, false, nil, "light")
 	if err != nil {
 		t.Fatalf("Render() error: %v", err)
 	}
@@ -93,7 +93,7 @@ func TestRender_Offline(t *testing.T) {
 	}
 
 	script := []byte("/* mermaid.js */")
-	result, err := Render(p, true, script)
+	result, err := Render(p, true, script, "light")
 	if err != nil {
 		t.Fatalf("Render() error: %v", err)
 	}
@@ -120,7 +120,7 @@ func TestRender_InlinedMermaidFence(t *testing.T) {
 		Mermaids: map[string]string{},
 	}
 
-	result, err := Render(p, false, nil)
+	result, err := Render(p, false, nil, "light")
 	if err != nil {
 		t.Fatalf("Render() error: %v", err)
 	}
@@ -147,7 +147,7 @@ func TestRender_AssetInlining(t *testing.T) {
 		Mermaids: map[string]string{},
 	}
 
-	result, err := Render(p, false, nil)
+	result, err := Render(p, false, nil, "light")
 	if err != nil {
 		t.Fatalf("Render() error: %v", err)
 	}
@@ -168,7 +168,7 @@ func TestRender_KeyboardNavScript(t *testing.T) {
 		Mermaids: map[string]string{},
 	}
 
-	result, err := Render(p, false, nil)
+	result, err := Render(p, false, nil, "light")
 	if err != nil {
 		t.Fatalf("Render() error: %v", err)
 	}
@@ -178,5 +178,40 @@ func TestRender_KeyboardNavScript(t *testing.T) {
 		if !strings.Contains(html, key) {
 			t.Errorf("keyboard nav script missing %s", key)
 		}
+	}
+}
+
+func TestRender_Theme(t *testing.T) {
+	p := &parser.Presentation{
+		Title: "Theme",
+		Slides: []parser.Slide{
+			{Index: 0, Content: "Theme slide"},
+		},
+		Assets:   map[string]parser.Asset{},
+		Mermaids: map[string]string{},
+	}
+
+	dark, err := Render(p, false, nil, "dark")
+	if err != nil {
+		t.Fatalf("Render(dark) error: %v", err)
+	}
+	if !strings.Contains(string(dark), `data-theme="dark"`) {
+		t.Error(`dark render missing data-theme="dark"`)
+	}
+
+	light, err := Render(p, false, nil, "light")
+	if err != nil {
+		t.Fatalf("Render(light) error: %v", err)
+	}
+	if !strings.Contains(string(light), `data-theme="light"`) {
+		t.Error(`light render missing data-theme="light"`)
+	}
+
+	empty, err := Render(p, false, nil, "")
+	if err != nil {
+		t.Fatalf("Render(empty) error: %v", err)
+	}
+	if !strings.Contains(string(empty), `data-theme="light"`) {
+		t.Error(`empty theme should normalize to data-theme="light"`)
 	}
 }

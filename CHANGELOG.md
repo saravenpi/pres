@@ -4,6 +4,16 @@ All notable changes to this project are documented here. The format is
 [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] — 2026-10-07
+
+### Added
+- Light and dark themes via a `--theme` flag on `serve` and `build`, defaulting to light.
+- Responsive Swiss-style slide layout: fluid typography and spacing that adapts to any screen size, including ultrawide.
+- charmbracelet fang CLI for styled help, version, and error output.
+
+### Changed
+- Go toolchain bumped to 1.25.
+
 ## [0.1.5] — 2026-10-07
 
 ### Fixed
@@ -40,6 +50,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial release: markdown-to-slides CLI tool.
 
+[0.3.0]: https://github.com/saravenpi/pres/releases/tag/v0.3.0
 [0.1.5]: https://github.com/saravenpi/pres/releases/tag/v0.1.5
 [0.1.4]: https://github.com/saravenpi/pres/releases/tag/v0.1.4
 [0.1.3]: https://github.com/saravenpi/pres/releases/tag/v0.1.3

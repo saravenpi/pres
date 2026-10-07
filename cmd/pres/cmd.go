@@ -1,10 +1,12 @@
 package pres
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"path/filepath"
 
+	"charm.land/fang/v2"
 	"github.com/saravenpi/pres/internal/builder"
 	"github.com/saravenpi/pres/internal/server"
 	"github.com/spf13/cobra"
@@ -12,7 +14,12 @@ import (
 
 func Execute(version string) {
 	rootCmd := buildRootCmd(version)
-	if err := rootCmd.Execute(); err != nil {
+	if err := fang.Execute(context.Background(), rootCmd,
+		fang.WithVersion(version),
+		fang.WithNotifySignal(os.Interrupt),
+		fang.WithoutCompletions(),
+		fang.WithoutManpage(),
+	); err != nil {
 		os.Exit(1)
 	}
 }
@@ -24,7 +31,6 @@ func buildRootCmd(version string) *cobra.Command {
 		Long:    "Pres turns a folder of markdown files into a self-contained HTML slideshow.",
 		Version: version,
 	}
-	rootCmd.SetVersionTemplate("{{.Name}} {{.Version}}\n")
 
 	rootCmd.AddCommand(
 		serveCmd(),
@@ -37,35 +43,47 @@ func buildRootCmd(version string) *cobra.Command {
 
 func serveCmd() *cobra.Command {
 	var portFlag int
+	var themeFlag string
 	cmd := &cobra.Command{
 		Use:   "serve <dir>",
 		Short: "Parse, render, and serve a presentation with live reload",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
+			if themeFlag != "light" && themeFlag != "dark" {
+				return fmt.Errorf("invalid theme %q: must be light or dark", themeFlag)
+			}
 			return server.Serve(server.Options{
-				Dir:  args[0],
-				Port: portFlag,
+				Dir:   args[0],
+				Port:  portFlag,
+				Theme: themeFlag,
 			})
 		},
 	}
 	cmd.Flags().IntVarP(&portFlag, "port", "p", 3000, "port to serve on")
+	cmd.Flags().StringVarP(&themeFlag, "theme", "t", "light", "presentation theme (light or dark)")
 	return cmd
 }
 
 func buildCmd() *cobra.Command {
 	var outFlag string
+	var themeFlag string
 	cmd := &cobra.Command{
 		Use:   "build <dir>",
 		Short: "Compile a presentation to a self-contained output file",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
+			if themeFlag != "light" && themeFlag != "dark" {
+				return fmt.Errorf("invalid theme %q: must be light or dark", themeFlag)
+			}
 			return builder.Build(builder.Options{
-				Dir:    args[0],
-				Out: outFlag,
+				Dir:   args[0],
+				Out:   outFlag,
+				Theme: themeFlag,
 			})
 		},
 	}
 	cmd.Flags().StringVarP(&outFlag, "output", "o", "", "output file")
+	cmd.Flags().StringVarP(&themeFlag, "theme", "t", "light", "presentation theme (light or dark)")
 	return cmd
 }
 
