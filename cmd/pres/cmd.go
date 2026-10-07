@@ -19,9 +19,9 @@ func Execute(version string) {
 
 func buildRootCmd(version string) *cobra.Command {
 	rootCmd := &cobra.Command{
-		Use:     "catalyst",
+		Use:     "pres",
 		Short:   "Markdown-to-slides CLI tool",
-		Long:    "Catalyst turns a folder of markdown files into a self-contained HTML slideshow.",
+		Long:    "Pres turns a folder of markdown files into a self-contained HTML slideshow.",
 		Version: version,
 	}
 	rootCmd.SetVersionTemplate("{{.Name}} {{.Version}}\n")
