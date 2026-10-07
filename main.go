@@ -4,7 +4,7 @@ import (
 	"github.com/saravenpi/pres/cmd/pres"
 )
 
-var version = "0.2.1"
+var version = "0.2.2"
 
 func main() {
 	pres.Execute(version)

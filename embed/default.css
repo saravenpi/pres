@@ -29,6 +29,11 @@ html, body {
   transition: opacity 0.2s ease;
 }
 
+.slide-content {
+  max-width: 900px;
+  text-align: left;
+}
+
 .slide.active {
   opacity: 1;
   pointer-events: auto;
@@ -70,6 +75,12 @@ html, body {
 .slide img {
   max-width: 100%;
   max-height: 60vh;
+}
+
+.slide .mermaid svg {
+  max-width: 100%;
+  max-height: 70vh;
+  height: auto;
 }
 
 .slide video {
