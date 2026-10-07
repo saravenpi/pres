@@ -4,6 +4,12 @@ All notable changes to this project are documented here. The format is
 [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.3] — 2026-10-07
+
+### Fixed
+- Video and audio files embedded via raw `<video>` / `<audio>` HTML tags were not base64-inlined (only `![alt](file)` markdown syntax was). The asset inliner now handles raw HTML tags too.
+- Tables had no borders or alignment styling. Added clean border-collapse, accent-colored header separators, and subtle row dividers to `.slide table`, `th`, and `td`.
+
 ## [0.1.2] — 2026-10-07
 
 ### Fixed
@@ -27,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Keyboard navigation (Space/arrows) with slide counter
 - Dark minimal theme
 
+[0.1.3]: https://github.com/saravenpi/catalyst/releases/tag/v0.1.3
 [0.1.2]: https://github.com/saravenpi/catalyst/releases/tag/v0.1.2
 [0.1.1]: https://github.com/saravenpi/catalyst/releases/tag/v0.1.1
 [0.1.0]: https://github.com/saravenpi/catalyst/releases/tag/v0.1.0

@@ -175,42 +175,61 @@ func extractMermaidBlocks(content string) (string, []mermaidBlock) {
 }
 
 func inlineAssets(content string, assets map[string]parser.Asset) string {
-	return assetRefRE.ReplaceAllStringFunc(content, func(match string) string {
+	content = assetRefRE.ReplaceAllStringFunc(content, func(match string) string {
 		sub := assetRefRE.FindStringSubmatch(match)
 		if len(sub) < 3 {
 			return match
 		}
 		alt := sub[1]
 		filename := sub[2]
-
 		if strings.Contains(filename, "://") {
 			return match
 		}
-
 		asset, ok := assets[filename]
 		if !ok {
 			return match
 		}
-
-		b64 := base64.StdEncoding.EncodeToString(asset.Data)
-		src := fmt.Sprintf("data:%s;base64,%s", asset.MimeType, b64)
-
-		switch {
-		case strings.HasPrefix(asset.MimeType, "video/"):
-			return fmt.Sprintf(
-				"<video src=\"%s\" controls></video>",
-				stdhtml.EscapeString(src),
-			)
-		case strings.HasPrefix(asset.MimeType, "audio/"):
-			return fmt.Sprintf(
-				"<audio src=\"%s\" controls></audio>",
-				stdhtml.EscapeString(src),
-			)
-		default:
-			return fmt.Sprintf(
-				"<img src=\"%s\" alt=\"%s\">",
-				stdhtml.EscapeString(src), stdhtml.EscapeString(alt),
-			)
-		}
+		return emitAssetTag(asset, alt)
 	})
+
+	content = tagSrcRE.ReplaceAllStringFunc(content, func(match string) string {
+		parts := tagSrcRE.FindStringSubmatch(match)
+		if len(parts) < 5 {
+			return match
+		}
+		tag := parts[1]
+		before := parts[2]
+		name := strings.TrimSpace(parts[3])
+		after := parts[4]
+		if strings.Contains(name, "://") {
+			return match
+		}
+		asset, ok := assets[name]
+		if !ok {
+			return match
+		}
+		return fmt.Sprintf("<%s%s src=\"%s\"%s>",
+			tag, before, stdhtml.EscapeString(dataURI(asset)), after)
+	})
+
+	return content
+}
+
+var tagSrcRE = regexp.MustCompile(`<(video|audio)\b([^>]*)src\s*=\s*"([^"]+)"([^>]*)>`)
+
+func dataURI(asset parser.Asset) string {
+	b64 := base64.StdEncoding.EncodeToString(asset.Data)
+	return fmt.Sprintf("data:%s;base64,%s", asset.MimeType, b64)
+}
+
+func emitAssetTag(asset parser.Asset, alt string) string {
+	src := dataURI(asset)
+	switch {
+	case strings.HasPrefix(asset.MimeType, "video/"):
+		return fmt.Sprintf("<video src=\"%s\" controls></video>", stdhtml.EscapeString(src))
+	case strings.HasPrefix(asset.MimeType, "audio/"):
+		return fmt.Sprintf("<audio src=\"%s\" controls></audio>", stdhtml.EscapeString(src))
+	default:
+		return fmt.Sprintf("<img src=\"%s\" alt=\"%s\">", stdhtml.EscapeString(src), stdhtml.EscapeString(alt))
+	}
 }

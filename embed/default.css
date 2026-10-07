@@ -88,6 +88,30 @@ html, body {
   font-family: 'undefined-medium', monospace;
 }
 
+.slide table {
+  border-collapse: collapse;
+  width: 100%;
+  max-width: 800px;
+}
+
+.slide th {
+  text-align: left;
+  padding: 0.6rem 1rem;
+  border-bottom: 2px solid var(--accent);
+  font-size: 1.2rem;
+  opacity: 0.8;
+}
+
+.slide td {
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  font-size: 1.2rem;
+}
+
+.slide tr:last-child td {
+  border-bottom: none;
+}
+
 .indicator {
   position: fixed;
   bottom: 1.5rem;
