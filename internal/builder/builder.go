@@ -13,9 +13,11 @@ import (
 )
 
 type Options struct {
-	Dir    string
-	OutDir string
+	Dir  string
+	Out  string
 }
+
+const mermaidURL = "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"
 
 func Build(opts Options) error {
 	p, err := parser.Parse(opts.Dir)
@@ -23,59 +25,40 @@ func Build(opts Options) error {
 		return fmt.Errorf("parsing %s: %w", opts.Dir, err)
 	}
 
-	b, err := renderer.Render(p, true)
+	mermaidScript, err := downloadMermaid()
+	if err != nil {
+		return fmt.Errorf("downloading mermaid.js: %w", err)
+	}
+
+	b, err := renderer.Render(p, true, mermaidScript)
 	if err != nil {
 		return fmt.Errorf("rendering: %w", err)
 	}
 
-	if err := os.MkdirAll(opts.OutDir, 0755); err != nil {
-		return fmt.Errorf("creating %s: %w", opts.OutDir, err)
+	out := opts.Out
+	if out == "" {
+		out = filepath.Base(opts.Dir) + ".html"
 	}
 
-	idxPath := filepath.Join(opts.OutDir, "index.html")
-	if err := os.WriteFile(idxPath, b, 0644); err != nil {
-		return fmt.Errorf("writing index.html: %w", err)
+	if err := os.WriteFile(out, b, 0644); err != nil {
+		return fmt.Errorf("writing %s: %w", out, err)
 	}
 
-	count := 1
-
-	mermaidURL := "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"
-	mermaidPath := filepath.Join(opts.OutDir, "mermaid.min.js")
-	if err := atomicDownload(mermaidURL, mermaidPath); err != nil {
-		fmt.Printf("! Could not download mermaid.js (%v) — mermaid diagrams need a network connection\n", err)
-	} else {
-		count++
-	}
-
-	fmt.Printf("▸ Building to %s/\n", opts.OutDir)
-	fmt.Printf("✓ Built %d files to %s/\n", count, opts.OutDir)
-
+	fmt.Printf("✓ Built %s\n", out)
 	return nil
 }
 
-func atomicDownload(url, path string) error {
+func downloadMermaid() ([]byte, error) {
 	client := &http.Client{Timeout: 30 * time.Second}
-	resp, err := client.Get(url)
+	resp, err := client.Get(mermaidURL)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("HTTP %d", resp.StatusCode)
+		return nil, fmt.Errorf("HTTP %d", resp.StatusCode)
 	}
 
-	tmp := path + ".catalyst-dl"
-	f, err := os.Create(tmp)
-	if err != nil {
-		return err
-	}
-	if _, err := io.Copy(f, resp.Body); err != nil {
-		f.Close()
-		os.Remove(tmp)
-		return err
-	}
-	f.Close()
-
-	return os.Rename(tmp, path)
+	return io.ReadAll(resp.Body)
 }

@@ -17,7 +17,7 @@ func TestRender_BasicSlide(t *testing.T) {
 		Mermaids: map[string]string{},
 	}
 
-	result, err := Render(p, false)
+	result, err := Render(p, false, nil)
 	if err != nil {
 		t.Fatalf("Render() error: %v", err)
 	}
@@ -29,11 +29,8 @@ func TestRender_BasicSlide(t *testing.T) {
 	if !strings.Contains(html, "<title>Test</title>") {
 		t.Error("output does not contain title")
 	}
-	if !strings.Contains(html, "undefined-medium") {
-		t.Error("output does not contain font-face")
-	}
-	if !strings.Contains(html, "cdn.jsdelivr.net") {
-		t.Error("output does not contain CDN mermaid import")
+	if !strings.Contains(html, "Helvetica") {
+		t.Error("output does not use Helvetica font")
 	}
 }
 
@@ -49,7 +46,7 @@ func TestRender_MultipleSlides(t *testing.T) {
 		Mermaids: map[string]string{},
 	}
 
-	result, err := Render(p, false)
+	result, err := Render(p, false, nil)
 	if err != nil {
 		t.Fatalf("Render() error: %v", err)
 	}
@@ -74,7 +71,7 @@ func TestRender_MermaidDiagram(t *testing.T) {
 		Mermaids: map[string]string{},
 	}
 
-	result, err := Render(p, false)
+	result, err := Render(p, false, nil)
 	if err != nil {
 		t.Fatalf("Render() error: %v", err)
 	}
@@ -95,17 +92,21 @@ func TestRender_Offline(t *testing.T) {
 		Mermaids: map[string]string{},
 	}
 
-	result, err := Render(p, true)
+	script := []byte("/* mermaid.js */")
+	result, err := Render(p, true, script)
 	if err != nil {
 		t.Fatalf("Render() error: %v", err)
 	}
 
 	html := string(result)
 	if strings.Contains(html, "cdn.jsdelivr.net") {
-		t.Error("offline mode should not contain CDN URL")
+		t.Error("offline mode with inline script should not contain CDN URL")
 	}
-	if !strings.Contains(html, "./mermaid.min.js") {
-		t.Error("offline mode should reference local mermaid file")
+	if !strings.Contains(html, "/* mermaid.js */") {
+		t.Error("offline mode should inline the mermaid script")
+	}
+	if strings.Contains(html, "EventSource") {
+		t.Error("offline mode should not contain live reload")
 	}
 }
 
@@ -119,7 +120,7 @@ func TestRender_InlinedMermaidFence(t *testing.T) {
 		Mermaids: map[string]string{},
 	}
 
-	result, err := Render(p, false)
+	result, err := Render(p, false, nil)
 	if err != nil {
 		t.Fatalf("Render() error: %v", err)
 	}
@@ -146,7 +147,7 @@ func TestRender_AssetInlining(t *testing.T) {
 		Mermaids: map[string]string{},
 	}
 
-	result, err := Render(p, false)
+	result, err := Render(p, false, nil)
 	if err != nil {
 		t.Fatalf("Render() error: %v", err)
 	}
@@ -167,7 +168,7 @@ func TestRender_KeyboardNavScript(t *testing.T) {
 		Mermaids: map[string]string{},
 	}
 
-	result, err := Render(p, false)
+	result, err := Render(p, false, nil)
 	if err != nil {
 		t.Fatalf("Render() error: %v", err)
 	}

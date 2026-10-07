@@ -10,7 +10,7 @@ html, body {
   height: 100%;
   background: var(--bg);
   color: var(--fg);
-  font-family: 'undefined-medium', monospace;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   overflow: hidden;
 }
 
@@ -84,8 +84,12 @@ html, body {
   font-size: 1rem;
 }
 
+.slide pre.mermaid {
+  background: transparent;
+}
+
 .slide code {
-  font-family: 'undefined-medium', monospace;
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
 }
 
 .slide table {

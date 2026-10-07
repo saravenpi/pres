@@ -34,7 +34,7 @@ func Serve(opts Options) error {
 	var html []byte
 
 	rebuild := func(pp *parser.Presentation) error {
-		b, err := renderer.Render(pp, false)
+		b, err := renderer.Render(pp, false, nil)
 		if err != nil {
 			return err
 		}

@@ -4,7 +4,7 @@ import (
 	"github.com/saravenpi/catalyst/cmd/catalyst"
 )
 
-var version = "0.1.3"
+var version = "0.1.4"
 
 func main() {
 	catalyst.Execute(version)

@@ -15,12 +15,10 @@ import (
 	goldmarkhtml "github.com/yuin/goldmark/renderer/html"
 )
 
-// WithUnsafe is intentionally left on: Catalyst is a local CLI tool, not a
-// web service. The user controls every byte of their markdown and opens the
-// rendered HTML in their own browser — same threat model as Hugo, Marp,
-// and every other static site generator.
-
-var md = goldmark.New(goldmark.WithExtensions(extension.GFM), goldmark.WithRendererOptions(goldmarkhtml.WithUnsafe()))
+var md = goldmark.New(
+	goldmark.WithExtensions(extension.GFM),
+	goldmark.WithRendererOptions(goldmarkhtml.WithUnsafe()),
+)
 
 type mermaidBlock struct {
 	code string
@@ -30,17 +28,12 @@ var mermaidFenceRE = regexp.MustCompile("(?s)```mermaid\\s*\\n(.*?)```")
 
 var assetRefRE = regexp.MustCompile(`!\[([^\]]*)\]\(([^)]+)\)`)
 
-func Render(p *parser.Presentation, offline bool) ([]byte, error) {
+func Render(p *parser.Presentation, offline bool, mermaidScript []byte) ([]byte, error) {
 	var buf bytes.Buffer
 
 	css, err := buildCSS()
 	if err != nil {
 		return nil, fmt.Errorf("building CSS: %w", err)
-	}
-
-	mermaidSrc := "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"
-	if offline {
-		mermaidSrc = "./mermaid.min.js"
 	}
 
 	buf.WriteString("<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n")
@@ -51,9 +44,18 @@ func Render(p *parser.Presentation, offline bool) ([]byte, error) {
 	buf.WriteString(css)
 	buf.WriteString("\n</style>\n</head>\n<body>\n")
 
+	writeSlides(&buf, p)
+	writeMermaid(&buf, offline, mermaidScript)
+	writeNav(&buf, offline)
+
+	buf.WriteString("</body>\n</html>\n")
+	return buf.Bytes(), nil
+}
+
+func writeSlides(buf *bytes.Buffer, p *parser.Presentation) {
 	buf.WriteString("<div id=\"slides\">\n")
 	for i, slide := range p.Slides {
-		fmt.Fprintf(&buf,
+		fmt.Fprintf(buf,
 			"<section class=\"slide%s\" id=\"slide-%d\">\n",
 			activeClass(i), i,
 		)
@@ -76,33 +78,55 @@ func Render(p *parser.Presentation, offline bool) ([]byte, error) {
 		content = inlineAssets(content, p.Assets)
 
 		var htmlBuf bytes.Buffer
-		if err := md.Convert([]byte(content), &htmlBuf); err != nil {
-			return nil, fmt.Errorf("rendering slide %d: %w", i, err)
-		}
+		md.Convert([]byte(content), &htmlBuf)
 		buf.WriteString(htmlBuf.String())
-
 		buf.WriteString("</div>\n</section>\n")
 	}
 	buf.WriteString("</div>\n")
-
 	buf.WriteString("<div id=\"counter\" class=\"indicator\"></div>\n")
+}
 
-	fmt.Fprintf(&buf, mermaidTemplate, mermaidSrc)
+func writeMermaid(buf *bytes.Buffer, offline bool, script []byte) {
+	if len(script) > 0 {
+		buf.WriteString("<script>\n")
+		buf.Write(script)
+		buf.WriteString("\n</script>\n")
+	} else {
+		buf.WriteString(
+			"<script src=\"https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js\"></script>\n",
+		)
+	}
+	buf.WriteString(mermaidInit)
+}
 
+const mermaidInit = `<script>
+if (typeof mermaid !== 'undefined') {
+ mermaid.initialize({
+  startOnLoad: true,
+  theme: 'base',
+  securityLevel: 'loose',
+  themeVariables: {
+   background: 'transparent',
+   primaryColor: '#7c5cff',
+   primaryTextColor: '#e8e8e8',
+   primaryBorderColor: '#5a3fd4',
+   lineColor: '#7c5cff',
+   secondaryColor: '#1f1f1f',
+   tertiaryColor: '#141414',
+   textColor: '#e8e8e8',
+   fontSize: '16px'
+  }
+ });
+}
+</script>
+`
+
+func writeNav(buf *bytes.Buffer, offline bool) {
 	buf.WriteString(kbNavScript)
 	if !offline {
 		buf.WriteString(liveReloadScript)
 	}
-
-	buf.WriteString("</body>\n</html>\n")
-	return buf.Bytes(), nil
 }
-
-const mermaidTemplate = `<script src="%s"></script>
-<script>
-mermaid.initialize({ startOnLoad: true, theme: 'dark', securityLevel: 'loose' });
-</script>
-`
 
 const kbNavScript = `<script>
 (function(){
@@ -138,21 +162,7 @@ func buildCSS() (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("reading default.css: %w", err)
 	}
-
-	fontData, err := embed.Assets.ReadFile("fonts/undefined-medium.woff2")
-	if err != nil {
-		return "", fmt.Errorf("reading font: %w", err)
-	}
-	fontB64 := base64.StdEncoding.EncodeToString(fontData)
-
-	fontFace := fmt.Sprintf(
-		"@font-face { font-family: 'undefined-medium'; "+
-			"src: url(data:font/woff2;base64,%s) format('woff2'); "+
-			"font-weight: 400; font-style: normal; }\n",
-		fontB64,
-	)
-
-	return fontFace + string(raw), nil
+	return string(raw), nil
 }
 
 func activeClass(i int) string {

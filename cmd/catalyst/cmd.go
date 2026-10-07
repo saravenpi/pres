@@ -56,16 +56,16 @@ func buildCmd() *cobra.Command {
 	var outFlag string
 	cmd := &cobra.Command{
 		Use:   "build <dir>",
-		Short: "Compile a presentation to a self-contained output directory",
+		Short: "Compile a presentation to a self-contained output file",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return builder.Build(builder.Options{
 				Dir:    args[0],
-				OutDir: outFlag,
+				Out: outFlag,
 			})
 		},
 	}
-	cmd.Flags().StringVarP(&outFlag, "output", "o", "dist", "output directory")
+	cmd.Flags().StringVarP(&outFlag, "output", "o", "dist", "output file")
 	return cmd
 }
 
