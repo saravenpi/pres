@@ -30,7 +30,7 @@ html, body {
 }
 
 .slide-content {
-  max-width: 900px;
+  max-width: 1100px;
   text-align: left;
 }
 
@@ -78,9 +78,9 @@ html, body {
 }
 
 .slide .mermaid svg {
-  max-width: 100%;
-  max-height: 70vh;
-  height: auto;
+  width: 100% !important;
+  max-height: 75vh;
+  height: auto !important;
 }
 
 .slide video {
