@@ -181,6 +181,27 @@ func TestRender_KeyboardNavScript(t *testing.T) {
 	}
 }
 
+func TestRender_HardLineBreaks(t *testing.T) {
+	p := &parser.Presentation{
+		Title: "Breaks",
+		Slides: []parser.Slide{
+			{Index: 0, Content: "line one\nline two\nline three"},
+		},
+		Assets:   map[string]parser.Asset{},
+		Mermaids: map[string]string{},
+	}
+
+	result, err := Render(p, false, nil, "light")
+	if err != nil {
+		t.Fatalf("Render() error: %v", err)
+	}
+
+	html := string(result)
+	if strings.Count(html, "<br") != 2 {
+		t.Errorf("expected 2 <br> for 2 line breaks, got %d in %q", strings.Count(html, "<br"), html)
+	}
+}
+
 func TestRender_Theme(t *testing.T) {
 	p := &parser.Presentation{
 		Title: "Theme",

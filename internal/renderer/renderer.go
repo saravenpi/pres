@@ -17,7 +17,10 @@ import (
 
 var md = goldmark.New(
 	goldmark.WithExtensions(extension.GFM),
-	goldmark.WithRendererOptions(goldmarkhtml.WithUnsafe()),
+	goldmark.WithRendererOptions(
+		goldmarkhtml.WithUnsafe(),
+		goldmarkhtml.WithHardWraps(),
+	),
 )
 
 var assetRefRE = regexp.MustCompile(`!\[([^\]]*)\]\(([^)]+)\)`)
