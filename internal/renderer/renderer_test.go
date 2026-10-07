@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/saravenpi/catalyst/internal/parser"
+	"github.com/saravenpi/pres/internal/parser"
 )
 
 func TestRender_BasicSlide(t *testing.T) {

@@ -8,8 +8,8 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/saravenpi/catalyst/embed"
-	"github.com/saravenpi/catalyst/internal/parser"
+	"github.com/saravenpi/pres/embed"
+	"github.com/saravenpi/pres/internal/parser"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/extension"
 	goldmarkhtml "github.com/yuin/goldmark/renderer/html"
@@ -152,7 +152,7 @@ show(0);
 `
 
 const liveReloadScript = `<script>
-new EventSource('/__catalyst_reload')
+new EventSource('/__pres_reload')
   .addEventListener('reload',function(){location.reload()});
 </script>
 `

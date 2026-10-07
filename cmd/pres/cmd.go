@@ -1,12 +1,12 @@
-package catalyst
+package pres
 
 import (
 	"fmt"
 	"os"
 	"path/filepath"
 
-	"github.com/saravenpi/catalyst/internal/builder"
-	"github.com/saravenpi/catalyst/internal/server"
+	"github.com/saravenpi/pres/internal/builder"
+	"github.com/saravenpi/pres/internal/server"
 	"github.com/spf13/cobra"
 )
 
@@ -86,7 +86,7 @@ func newCmd() *cobra.Command {
 
 			presPath := filepath.Join(name, "pres.md")
 			starter := fmt.Sprintf(
-				"# %s\n\nWelcome to your Catalyst presentation!\n\n---\n\n"+
+				"# %s\n\nWelcome to your Pres presentation!\n\n---\n\n"+
 					"## Slide 2\n\nYour content here.\n\n---\n\n"+
 					"## Slide 3\n\nMore content.\n",
 				name,

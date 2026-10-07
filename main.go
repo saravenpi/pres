@@ -1,11 +1,11 @@
 package main
 
 import (
-	"github.com/saravenpi/catalyst/cmd/catalyst"
+	"github.com/saravenpi/pres/cmd/pres"
 )
 
-var version = "0.1.5"
+var version = "0.2.0"
 
 func main() {
-	catalyst.Execute(version)
+	pres.Execute(version)
 }

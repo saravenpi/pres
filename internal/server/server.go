@@ -12,8 +12,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/saravenpi/catalyst/internal/parser"
-	"github.com/saravenpi/catalyst/internal/renderer"
+	"github.com/saravenpi/pres/internal/parser"
+	"github.com/saravenpi/pres/internal/renderer"
 )
 
 type Options struct {
@@ -66,7 +66,7 @@ func Serve(opts Options) error {
 		w.Write(data)
 	})
 
-	mux.HandleFunc("/__catalyst_reload", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/__pres_reload", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/event-stream")
 		w.Header().Set("Cache-Control", "no-cache")
 		w.Header().Set("Connection", "keep-alive")

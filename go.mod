@@ -1,4 +1,4 @@
-module github.com/saravenpi/catalyst
+module github.com/saravenpi/pres
 
 go 1.24
 

@@ -1,6 +1,6 @@
 ## Goal
 
-A single Go binary (`catalyst`) that turns a folder of markdown files, assets, and Mermaid
+A single Go binary (`pres`) that turns a folder of markdown files, assets, and Mermaid
 diagrams into a self-contained HTML slideshow, serves it locally, and compiles it to a static
 `dist/` folder.
 
@@ -33,7 +33,7 @@ navigation, Mermaid integration, font embedding) behind a small interface (one m
 
 ## Files to create (ordered by dependency)
 
-1. `go.mod` + `go.sum` — module `github.com/saravenpi/catalyst`
+1. `go.mod` + `go.sum` — module `github.com/saravenpi/pres`
 2. `embed/fonts/undefined-medium.woff2` — downloaded from
    https://github.com/andirueckel/undefined-medium/raw/v1.3/fonts/webfonts/undefined-medium.woff2
 3. `embed/default.css` — slide layout CSS (full-viewport slides, centered content,
@@ -46,8 +46,8 @@ navigation, Mermaid integration, font embedding) behind a small interface (one m
 7. `internal/server/server.go` — the Server module (net/http + fsnotify or polling watch,
    SSE for live reload)
 8. `internal/builder/builder.go` — the Builder module
-9. `cmd/catalyst/main.go` — CLI entry point: `serve`, `build`, `new` subcommands
-10. `main.go` — package main, calls `cmd/catalyst`
+9. `cmd/pres/main.go` — CLI entry point: `serve`, `build`, `new` subcommands
+10. `main.go` — package main, calls `cmd/pres`
 
 ## Presentation model
 
@@ -75,14 +75,14 @@ or just paste the mermaid code directly.
 ## CLI surface
 
 ```
-catalyst serve <dir>        Parse, render, serve on localhost:3000, watch for changes
-catalyst serve <dir> -p 8080  Serve on a specific port
-catalyst build <dir>        Compile to dist/<dir>/index.html with all assets
-catalyst build <dir> -o out  Compile to out/index.html
-catalyst new <name>         Scaffold a new presentation folder
+pres serve <dir>        Parse, render, serve on localhost:3000, watch for changes
+pres serve <dir> -p 8080  Serve on a specific port
+pres build <dir>        Compile to dist/<dir>/index.html with all assets
+pres build <dir> -o out  Compile to out/index.html
+pres new <name>         Scaffold a new presentation folder
 ```
 
-Following CLI standard convention: `--version` prints `catalyst 0.1.0`, `--help`
+Following CLI standard convention: `--version` prints `pres 0.1.0`, `--help`
 is automatic via cobra, subcommands are single lowercase words.
 
 ## Keyboard navigation
@@ -102,11 +102,11 @@ in the compiled output.
 ## Exit criteria
 
 - `go build ./...` compiles clean
-- `catalyst serve testdata/example` opens a browser showing slides
+- `pres serve testdata/example` opens a browser showing slides
 - Space/arrow keys navigate slides
 - Images, videos, audio render correctly
 - Mermaid diagrams render from `.mmd` files and inline fenced blocks
-- `catalyst build testdata/example -o /tmp/out` produces a self-contained folder
+- `pres build testdata/example -o /tmp/out` produces a self-contained folder
   that works when opened directly (file://) or served statically
 - The font is the Undefined Medium pixel font on all text
 

@@ -7,14 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.5] — 2026-10-07
 
 ### Fixed
-- `catalyst build .` without `-o` flag wrote output to a file named `dist` instead of deriving the filename from the presentation directory. Default output flag is now empty; the builder falls back to `<dirname>.html`.
+- `pres build .` without `-o` flag wrote output to a file named `dist` instead of deriving the filename from the presentation directory. Default output flag is now empty; the builder falls back to `<dirname>.html`.
 
 ## [0.1.4] — 2026-10-07
 
 ### Changed
 - `build` now outputs a single self-contained HTML file instead of a folder. Mermaid.js is inlined — no separate `.js` file, no CDN dependency, works fully offline.
 - Font switched to Helvetica Neue / Helvetica / Arial system stack. No more base64 font bloat.
-- Mermaid diagrams now use a transparent background with Catalyst accent colors, blending into slides.
+- Mermaid diagrams now use a transparent background with Pres accent colors, blending into slides.
 
 ### Fixed
 - Raw `<video>` and `<audio>` HTML tags are now base64-inlined.
@@ -40,9 +40,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial release: markdown-to-slides CLI tool.
 
-[0.1.5]: https://github.com/saravenpi/catalyst/releases/tag/v0.1.5
-[0.1.4]: https://github.com/saravenpi/catalyst/releases/tag/v0.1.4
-[0.1.3]: https://github.com/saravenpi/catalyst/releases/tag/v0.1.3
-[0.1.2]: https://github.com/saravenpi/catalyst/releases/tag/v0.1.2
-[0.1.1]: https://github.com/saravenpi/catalyst/releases/tag/v0.1.1
-[0.1.0]: https://github.com/saravenpi/catalyst/releases/tag/v0.1.0
+[0.1.5]: https://github.com/saravenpi/pres/releases/tag/v0.1.5
+[0.1.4]: https://github.com/saravenpi/pres/releases/tag/v0.1.4
+[0.1.3]: https://github.com/saravenpi/pres/releases/tag/v0.1.3
+[0.1.2]: https://github.com/saravenpi/pres/releases/tag/v0.1.2
+[0.1.1]: https://github.com/saravenpi/pres/releases/tag/v0.1.1
+[0.1.0]: https://github.com/saravenpi/pres/releases/tag/v0.1.0

@@ -1,6 +1,6 @@
-# Catalyst Demo
+# Pres Demo
 
-Welcome to Catalyst!
+Welcome to Pres!
 
 ---
 

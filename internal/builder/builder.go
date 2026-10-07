@@ -5,11 +5,10 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"path/filepath"
 	"time"
 
-	"github.com/saravenpi/catalyst/internal/parser"
-	"github.com/saravenpi/catalyst/internal/renderer"
+	"github.com/saravenpi/pres/internal/parser"
+	"github.com/saravenpi/pres/internal/renderer"
 )
 
 type Options struct {
@@ -37,7 +36,7 @@ func Build(opts Options) error {
 
 	out := opts.Out
 	if out == "" {
-		out = filepath.Base(opts.Dir) + ".html"
+		out = "pres.html"
 	}
 
 	if err := os.WriteFile(out, b, 0644); err != nil {
