@@ -104,7 +104,7 @@ func TestRender_Offline(t *testing.T) {
 	if strings.Contains(html, "cdn.jsdelivr.net") {
 		t.Error("offline mode should not contain CDN URL")
 	}
-	if !strings.Contains(html, "./mermaid.esm.min.mjs") {
+	if !strings.Contains(html, "./mermaid.min.js") {
 		t.Error("offline mode should reference local mermaid file")
 	}
 }

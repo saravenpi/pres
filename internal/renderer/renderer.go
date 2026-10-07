@@ -37,9 +37,9 @@ func Render(p *parser.Presentation, offline bool) ([]byte, error) {
 		return nil, fmt.Errorf("building CSS: %w", err)
 	}
 
-	mermaidSrc := "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs"
+	mermaidSrc := "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"
 	if offline {
-		mermaidSrc = "./mermaid.esm.min.mjs"
+		mermaidSrc = "./mermaid.min.js"
 	}
 
 	buf.WriteString("<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n")
@@ -97,8 +97,8 @@ func Render(p *parser.Presentation, offline bool) ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-const mermaidTemplate = `<script type="module">
-import mermaid from '%s';
+const mermaidTemplate = `<script src="%s"></script>
+<script>
 mermaid.initialize({ startOnLoad: true, theme: 'dark', securityLevel: 'loose' });
 </script>
 `

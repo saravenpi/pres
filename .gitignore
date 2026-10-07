@@ -1,0 +1,4 @@
+/catalyst
+dist/
+*.test
+*.out

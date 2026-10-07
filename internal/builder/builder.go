@@ -39,8 +39,8 @@ func Build(opts Options) error {
 
 	count := 1
 
-	mermaidURL := "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs"
-	mermaidPath := filepath.Join(opts.OutDir, "mermaid.esm.min.mjs")
+	mermaidURL := "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"
+	mermaidPath := filepath.Join(opts.OutDir, "mermaid.min.js")
 	if err := atomicDownload(mermaidURL, mermaidPath); err != nil {
 		fmt.Printf("! Could not download mermaid.js (%v) — mermaid diagrams need a network connection\n", err)
 	} else {
